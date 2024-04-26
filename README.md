@@ -1,6 +1,6 @@
 # AuthSafe
 
-[![DockerCI](https://github.com/anapeksha/authsafe/actions/workflows/deployment-build-copy.yml/badge.svg)]
+![DockerCI](https://github.com/anapeksha/authsafe/actions/workflows/deployment-build-copy.yml/badge.svg)
 
 🚀 Connect with users effortlessly, secure their data with ease, and elevate your application's security to new heights. AuthSafe provides a seamless authentication service to handle all your security needs.
 
