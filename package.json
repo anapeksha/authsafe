@@ -1,8 +1,8 @@
 {
-  "name": "authsafe-nest",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "authsafe",
+  "version": "0.1.0",
+  "description": "Identity provider",
+  "author": "Anapeksha Mukherjee",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
