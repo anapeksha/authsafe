@@ -9,23 +9,37 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String   @id @default(cuid())
+  email     String
   password  String
   name      String
   image     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   apiKeys   ApiKey[]
+  tokens    Token[]
+
+  @@unique([email])
+}
+
+model Token {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([token])
 }
 
 model ApiKey {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   userId    String
-  key       String
+  key       String   @default(uuid())
   createdAt DateTime @default(now())
   expiresAt DateTime
-  User      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
-  @@unique([userId, key])
+  @@unique([key])
 }
