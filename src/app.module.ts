@@ -3,7 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 import { AuthModule } from "./auth/auth.module";
-import config from "./config/config";
+import config from "./config/constants.config";
 import { UserModule } from "./user/user.module";
 
 @Module({
