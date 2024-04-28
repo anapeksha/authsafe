@@ -10,9 +10,9 @@ export class CloudinaryService {
     this.cloudinary = cloudinary;
     this.cloudinary.config({
       secure: false,
-      cloud_name: this.config.get("cloudinary.cloud_name"),
-      api_key: this.config.get("cloudinary.api_key"),
-      api_secret: this.config.get("cloudinary.api_secret"),
+      cloud_name: this.config.getOrThrow("cloudinary.cloud_name"),
+      api_key: this.config.getOrThrow("cloudinary.api_key"),
+      api_secret: this.config.getOrThrow("cloudinary.api_secret"),
     });
   }
   async uploader(file: Express.Multer.File) {
