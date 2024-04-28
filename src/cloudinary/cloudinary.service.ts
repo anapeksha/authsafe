@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
-import * as sharp from "sharp";
+import sharp from "sharp";
 
 @Injectable()
 export class CloudinaryService {
@@ -26,7 +26,6 @@ export class CloudinaryService {
         })
         .jpeg({ quality: 100 })
         .toBuffer();
-      console.log("image", image);
       const upload = await new Promise<UploadApiResponse>((resolve, reject) => {
         this.cloudinary.uploader
           .upload_stream(

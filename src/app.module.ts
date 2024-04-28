@@ -4,7 +4,6 @@ import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 import { AuthModule } from "./auth/auth.module";
 import config from "./config/config";
-import { UserModule } from "./user/user.module";
 
 @Module({
   imports: [
@@ -18,7 +17,6 @@ import { UserModule } from "./user/user.module";
       exclude: ["/api/(.*)"],
     }),
     AuthModule,
-    UserModule,
   ],
 })
 export class AppModule {}

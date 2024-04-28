@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Prisma, User } from "@prisma/client";
 import * as argon2 from "argon2";
 import { CloudinaryService } from "src/cloudinary/cloudinary.service";
@@ -28,14 +28,19 @@ export class UserService {
     orderBy?: Prisma.UserOrderByWithRelationInput;
   }): Promise<Omit<User, "password">[]> {
     const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.user.findMany({
-      skip: Number(skip),
-      take: Number(take),
-      cursor,
-      where,
-      orderBy,
-      omit: { password: true },
-    });
+    try {
+      const user = await this.prisma.user.findMany({
+        skip: Number(skip),
+        take: Number(take),
+        cursor,
+        where,
+        orderBy,
+        omit: { password: true },
+      });
+      return user;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async createUser(
@@ -43,7 +48,6 @@ export class UserService {
   ): Promise<Omit<User, "password">> {
     try {
       const { file, password, name, email } = unhashedData;
-      console.log("unhashed data", unhashedData);
       const digest = await argon2.hash(password);
       const imageUrl = await this.cloudinary.uploader(file);
       const data = {
@@ -52,13 +56,12 @@ export class UserService {
         email: email,
         password: digest,
       };
-      console.log("processed data", data);
       return this.prisma.user.create({
         data,
         omit: { password: true },
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw error;
     }
   }
 
@@ -74,7 +77,7 @@ export class UserService {
         omit: { password: true },
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw error;
     }
   }
 
@@ -87,7 +90,7 @@ export class UserService {
         omit: { password: true },
       });
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw error;
     }
   }
 }
