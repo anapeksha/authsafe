@@ -36,7 +36,7 @@ export class AuthController {
           signed: false,
           expires: dayjs(new Date()).add(7, "days").toDate(),
           httpOnly: true,
-          sameSite: "lax",
+          sameSite: "none",
         })
         .json({ token: accessToken });
     } catch (error) {
