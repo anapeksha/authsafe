@@ -9,53 +9,56 @@ datasource db {
 }
 
 model User {
+  id                String              @id @default(cuid())
+  email             String              @unique
+  password          String
+  name              String
+  image             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  Client            Client[]
+  AuthorizationCode AuthorizationCode[]
+  RefreshToken      RefreshToken[]
+}
+
+model Client {
+  id           String   @id @default(cuid())
+  userId       String
+  secret       String   @default("")
+  redirectUris String[] @default([])
+  scopes       String[] @default([])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  RefreshToken      RefreshToken[]
+  AuthorizationCode AuthorizationCode[]
+  User              User                @relation(fields: [userId], references: [id])
+
+  @@unique([secret, userId])
+}
+
+model AuthorizationCode {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  clientId    String
+  userId      String?
+  redirectURI String
+  expiresAt   DateTime
+
+  client Client @relation(fields: [clientId], references: [id])
+  user   User?  @relation(fields: [userId], references: [id])
+}
+
+model RefreshToken {
   id        String   @id @default(cuid())
-  email     String
-  password  String
-  name      String
-  image     String?
+  userId    String?
+  clientId  String
+  token     String   @unique
+  scopes    Json     @default("[]")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  apiKeys   ApiKey[]
-  tokens    Token[]
-  roles     Role[]
-
-  @@unique([email])
-}
-
-model Token {
-  id        String   @id @default(cuid())
-  userId    String
-  token     String   @default(uuid())
-  createdAt DateTime @default(now())
   expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id])
 
-  @@unique([token])
-}
-
-model ApiKey {
-  id        String   @id @default(cuid())
-  userId    String
-  key       String   @default(uuid())
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id])
-
-  @@unique([key])
-}
-
-model Role {
-  id          String       @id @default(cuid())
-  userId      String
-  permissions Permission[] @default([])
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  user        User         @relation(fields: [userId], references: [id])
-}
-
-enum Permission {
-  READ
-  EDIT
-  FULL_CONTROL
+  user   User?  @relation(fields: [userId], references: [id])
+  client Client @relation(fields: [clientId], references: [id])
 }
