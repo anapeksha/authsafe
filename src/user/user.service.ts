@@ -1,15 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma, User } from "@prisma/client";
 import * as argon2 from "argon2";
-import { CloudinaryService } from "src/cloudinary/cloudinary.service";
 import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class UserService {
-  constructor(
-    private prisma: PrismaService,
-    private cloudinary: CloudinaryService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async user(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
@@ -44,16 +40,16 @@ export class UserService {
   }
 
   async createUser(
-    unhashedData: Prisma.UserCreateInput & { file: Express.Multer.File },
+    unhashedData: Prisma.UserCreateInput,
   ): Promise<Omit<User, "password">> {
     try {
-      const { file, password, name, email } = unhashedData;
+      const { terms, password, name, email } = unhashedData;
       const digest = await argon2.hash(password);
-      const imageUrl = await this.cloudinary.uploader(file);
       const data = {
-        image: imageUrl,
-        name: name,
-        email: email,
+        image: "",
+        name,
+        email,
+        terms: Boolean(terms),
         password: digest,
       };
       return this.prisma.user.create({

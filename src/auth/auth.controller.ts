@@ -8,8 +8,9 @@ import {
   Post,
   Res,
   UnauthorizedException,
+  UseInterceptors,
 } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { NoFilesInterceptor } from "@nestjs/platform-express";
 import { User } from "@prisma/client";
 import dayjs from "dayjs";
 import type { Response } from "express";
@@ -17,12 +18,10 @@ import { AuthService } from "./auth.service";
 
 @Controller("auth")
 export class AuthController {
-  constructor(
-    private auth: AuthService,
-    private config: ConfigService,
-  ) {}
+  constructor(private auth: AuthService) {}
 
   @Post("signin")
+  @UseInterceptors(NoFilesInterceptor())
   async signIn(
     @Body() dto: Pick<User, "email" | "password">,
     @Res({ passthrough: true }) res: Response,
