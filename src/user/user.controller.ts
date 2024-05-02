@@ -4,10 +4,9 @@ import {
   Get,
   Param,
   Post,
-  UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
+import { NoFilesInterceptor } from "@nestjs/platform-express";
 import { Prisma, User } from "@prisma/client";
 import { UserService } from "./user.service";
 
@@ -28,12 +27,12 @@ export class UserController {
     return this.userService.users(body);
   }
   @Post("create")
-  @UseInterceptors(FileInterceptor("image"))
+  @UseInterceptors(NoFilesInterceptor())
   async createUser(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() dto: Pick<User, "name" | "email" | "password">,
+    @Body() dto: Pick<User, "name" | "terms" | "email" | "password">,
   ) {
-    return this.userService.createUser({ file: file, ...dto });
+    console.log(dto);
+    return this.userService.createUser(dto);
   }
   @Get(":id")
   async getUserById(@Param("id") id: string) {
