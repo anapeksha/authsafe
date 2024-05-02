@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { Token, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import dayjs from "dayjs";
 import type { Response } from "express";
 import { AuthService } from "./auth.service";
@@ -52,15 +52,6 @@ export class AuthController {
       } else {
         throw new InternalServerErrorException();
       }
-    }
-  }
-  @Post("refresh")
-  async refreshToken(@Body() refreshToken: Token["token"]) {
-    try {
-      const token = await this.auth.refreshAccessToken(refreshToken);
-      return { token };
-    } catch (error) {
-      throw new UnauthorizedException();
     }
   }
 }

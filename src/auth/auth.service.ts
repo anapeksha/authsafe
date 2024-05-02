@@ -4,7 +4,6 @@ import { JwtService } from "@nestjs/jwt";
 import type { User } from "@prisma/client";
 import argon2 from "argon2";
 import { isEmail, isEmpty } from "class-validator";
-import dayjs from "dayjs";
 import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
@@ -50,52 +49,9 @@ export class AuthService {
         secret: this.config.getOrThrow("secrets.jwt"),
         expiresIn: "15m",
       });
-      const { token } = await this.prisma.token.create({
-        data: {
-          userId: user.id,
-          expiresAt: dayjs(new Date()).add(7, "days").toDate(),
-        },
-      });
-      return { accessToken, refreshToken: token };
+      return { accessToken, refreshToken: "token" };
     } catch (error) {
       throw error;
-    }
-  }
-  async refreshAccessToken(token: string) {
-    try {
-      const refreshToken = await this.prisma.token.findUniqueOrThrow({
-        where: { token },
-      });
-      if (dayjs(new Date(refreshToken.expiresAt)).isBefore(new Date())) {
-        const user = await this.prisma.user.findUnique({
-          where: {
-            id: refreshToken.userId,
-          },
-          omit: {
-            password: true,
-          },
-        });
-        const payload = { sub: user.id, email: user.email };
-        const accessToken = await this.jwt.signAsync(payload, {
-          secret: this.config.getOrThrow("secrets.jwt"),
-          expiresIn: "15m",
-        });
-        return accessToken;
-      } else {
-        this.prisma.token.delete({
-          where: {
-            token,
-          },
-        });
-        throw new Error("REFRESH-TOKEN-EXPIRED");
-      }
-    } catch (error) {
-      const { code, message } = error;
-      if (code === "P2025") {
-        throw new Error("REFRESH-TOKEN-NOT-FOUND");
-      } else {
-        throw error;
-      }
     }
   }
 }
