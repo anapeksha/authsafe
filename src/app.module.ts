@@ -2,8 +2,11 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
-import { AuthModule } from "./auth/auth.module";
-import config from "./config/config";
+import { AppController } from "./app.controller";
+import { ClientModule } from "./client/client.module";
+import config from "./config/constants.config";
+import { OAuthModule } from "./oauth/oauth.module";
+import { UserModule } from "./user/user.module";
 
 @Module({
   imports: [
@@ -12,11 +15,14 @@ import config from "./config/config";
       load: [config],
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, "..", "/public"),
-      renderPath: "/*",
+      rootPath: join(__dirname, "..", "public"),
+      serveRoot: "/static/",
       exclude: ["/api/(.*)"],
     }),
-    AuthModule,
+    OAuthModule,
+    ClientModule,
+    UserModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

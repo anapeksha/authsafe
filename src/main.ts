@@ -1,20 +1,21 @@
-import { RequestMethod, ValidationPipe } from "@nestjs/common";
+import { RequestMethod } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
-import * as cookieParser from "cookie-parser";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import { join } from "path";
 import { AppModule } from "./app.module";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix("api", {
-    exclude: [{ path: "/login", method: RequestMethod.GET }],
+    exclude: [{ path: "signin", method: RequestMethod.GET }],
   });
+  app.setBaseViewsDir(join(__dirname, "..", "views"));
+  app.setViewEngine("hbs");
   app.use(cookieParser(process.env.COOKIE_SECRET));
-  app.enableCors();
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  );
+  app.enableCors({ credentials: true });
+  app.use(helmet());
   await app.listen(process.env.PORT);
 }
 bootstrap();

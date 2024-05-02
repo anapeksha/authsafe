@@ -4,7 +4,6 @@ import {
   Get,
   Param,
   Post,
-  Query,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
@@ -15,10 +14,10 @@ import { UserService } from "./user.service";
 @Controller("user")
 export class UserController {
   constructor(private userService: UserService) {}
-  @Get("/all")
+  @Get("all")
   async getManyUsers(
-    @Query()
-    query: {
+    @Body()
+    body: {
       skip?: number;
       take?: number;
       cursor?: Prisma.UserWhereUniqueInput;
@@ -26,9 +25,9 @@ export class UserController {
       orderBy?: Prisma.UserOrderByWithRelationInput;
     },
   ) {
-    return this.userService.users(query);
+    return this.userService.users(body);
   }
-  @Post("/create")
+  @Post("create")
   @UseInterceptors(FileInterceptor("image"))
   async createUser(
     @UploadedFile() file: Express.Multer.File,
@@ -36,7 +35,7 @@ export class UserController {
   ) {
     return this.userService.createUser({ file: file, ...dto });
   }
-  @Get("/:id")
+  @Get(":id")
   async getUserById(@Param("id") id: string) {
     return this.userService.user({ id });
   }
