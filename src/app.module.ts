@@ -2,11 +2,11 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
-import { AuthModule } from "./auth/auth.module";
-import { ClientModule } from "./client/client.module";
 import config from "./config/constants.config";
-import { OAuthModule } from "./oauth/oauth.module";
-import { UserModule } from "./user/user.module";
+import { AuthModule } from "./modules/auth.module";
+import { ClientModule } from "./modules/client.module";
+import { OAuthModule } from "./modules/oauth.module";
+import { UserModule } from "./modules/user.module";
 
 @Module({
   imports: [

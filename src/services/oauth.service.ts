@@ -9,8 +9,9 @@ import {
   exchange,
   grant,
   type ExchangeDoneFunction,
+  type ValidateDoneFunction,
 } from "oauth2orize";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "src/services/prisma.service";
 
 @Injectable()
 export class OAuthService {
@@ -19,7 +20,7 @@ export class OAuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
   ) {
-    this.server.serializeClient((client, done) => {
+    this.server.serializeClient((client, done: ValidateDoneFunction) => {
       done(null, client.id);
     });
     this.server.deserializeClient(async (id, done) => {
@@ -53,6 +54,7 @@ export class OAuthService {
                 expiresAt: dayjs(new Date()).add(10, "minutes").toDate(),
               },
             });
+            console.log("hello", authorizationCode);
             issued(null, authorizationCode);
           } catch (error) {
             issued(error);

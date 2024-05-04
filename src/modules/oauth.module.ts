@@ -1,8 +1,9 @@
 import { MiddlewareConsumer, Module, RequestMethod } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
-import { PrismaService } from "src/prisma/prisma.service";
-import { OAuthController } from "./oauth.controller";
-import { OAuthService } from "./oauth.service";
+import { ValidateDoneFunction } from "oauth2orize";
+import { PrismaService } from "src/services/prisma.service";
+import { OAuthController } from "../controllers/oauth.controller";
+import { OAuthService } from "../services/oauth.service";
 
 @Module({
   imports: [
@@ -17,13 +18,23 @@ import { OAuthService } from "./oauth.service";
   controllers: [OAuthController],
 })
 export class OAuthModule {
-  constructor(private oauth: OAuthService) {}
+  constructor(
+    private oauth: OAuthService,
+    private prisma: PrismaService,
+  ) {}
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(
-        this.oauth.server.authorization((clientId, redirectUri, done) => {
-          console.log(clientId, redirectUri, done);
-        }),
+        this.oauth.server.authorization(
+          async (clientId, redirectUri, done: ValidateDoneFunction) => {
+            const client = await this.prisma.client.findUnique({
+              where: {
+                id: clientId,
+              },
+            });
+            done(null, client, redirectUri);
+          },
+        ),
       )
       .forRoutes({ path: "/oauth/authorize", method: RequestMethod.GET });
     consumer

@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { NoFilesInterceptor } from "@nestjs/platform-express";
 import { Prisma, User } from "@prisma/client";
-import { UserService } from "./user.service";
+import { UserService } from "../services/user.service";
 
 @Controller("user")
 export class UserController {

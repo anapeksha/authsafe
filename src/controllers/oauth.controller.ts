@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Render, Req, Res } from "@nestjs/common";
-import { OAuthService } from "./oauth.service";
+import { Controller, Get, Post, Req, Res } from "@nestjs/common";
+import { OAuthService } from "../services/oauth.service";
 
 interface TokenBody {
   code: string;
@@ -12,21 +12,21 @@ interface TokenBody {
 @Controller("oauth")
 export class OAuthController {
   constructor(private oauth2: OAuthService) {}
-  @Render("login")
   @Get("authorize")
   async authorize(@Res() res, @Req() req) {
-    return {
+    console.log({
       transactionId: req.oauth2.transactionID,
       user: req.user,
       client: req.oauth2.client,
-    };
+    });
   }
   @Post("token")
   token() {
-    return;
+    this.oauth2.server.token();
+    this.oauth2.server.errorHandler();
   }
   @Post("decision")
   decision() {
-    return;
+    this.oauth2.server.decision();
   }
 }

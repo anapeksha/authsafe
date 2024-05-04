@@ -14,7 +14,7 @@ import { NoFilesInterceptor } from "@nestjs/platform-express";
 import { User } from "@prisma/client";
 import dayjs from "dayjs";
 import type { Response } from "express";
-import { AuthService } from "./auth.service";
+import { AuthService } from "../services/auth.service";
 
 @Controller("auth")
 export class AuthController {

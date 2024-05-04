@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { isNotEmpty } from "class-validator";
-import { ClientService } from "./client.service";
+import { ClientService } from "../services/client.service";
 
 @Controller("client")
 export class ClientController {
@@ -28,9 +28,9 @@ export class ClientController {
     return this.client.clients(body);
   }
   @Post("create")
-  async createUser(@Body() userId: string) {
-    if (isNotEmpty(userId)) {
-      return await this.client.createClient(userId);
+  async createUser(@Body() body: { userId: string }) {
+    if (isNotEmpty(body.userId)) {
+      return await this.client.createClient(body.userId);
     } else {
       throw new BadRequestException("user id is empty");
     }
